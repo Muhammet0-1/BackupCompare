@@ -27,3 +27,7 @@ Tests:
 See TESTING.md for evidence and platform limits. Turkish: README.md.
 
 The optional platform workflow is manual-only (workflow_dispatch), with no push or pull-request trigger. It was not run for this publication because account quota/cost conditions remain unverified. A workflow file is not platform test evidence.
+
+## License
+
+This project is available under the [MIT License](LICENSE).

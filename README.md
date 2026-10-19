@@ -63,3 +63,7 @@ Bütün testler sentetik geçici dizinleri kullanır. Windows/macOS ve Python 3.
 Workflow Windows ve macOS için test hazırlığı içerir; dosyanın varlığı test sonucu değildir. Atlanan testler başarı sayılmaz; bağımsız testlerdeki POSIX varsayımları Windows'ta hata verebilir. Harness atlama/hata sayılarını açıkça raporlar. Gerçek sonuç olmadan başarı rozeti üretilmez.
 
 Yerel .ci-results çalışma çıktıları Git'e dahil edilmez.
+
+## Lisans
+
+Bu proje [MIT Lisansı](LICENSE) ile sunulur.
