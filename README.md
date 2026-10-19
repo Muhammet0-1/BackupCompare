@@ -1,8 +1,12 @@
 # Backup Compare
 
-Python standart kütüphanesiyle iki klasörün göreli yollarını ve dosya içeriklerini karşılaştıran, salt okunur komut satırı aracı. Dosya kopyalamaz, silmez, onarmaz; yedek oluşturmaz. Ek Python paketi veya hesap gerektirmez.
+[English](README.en.md) · [Test kanıtı](TESTING.md)
 
-Bu sürüm, kullanıcının onayladığı özel `Muhammet0-1/BackupCompare` deposunda platform testi hazırlığı içindir. Depo testlerden sonra da private kalmalıdır. Windows/macOS desteği gerçek Actions sonuçlarıyla değerlendirilmelidir; workflow dosyasının varlığı test başarısı değildir.
+[Yazı: Yedek klasörü var. Peki dosyalar aynı mı?](https://lordms.net/tr/yazilar/yedek-klasor-kontrolu/)
+
+[Kullanım rehberi](https://lordms.net/tr/notlar/backup-compare-kullanim/)
+
+Python standart kütüphanesiyle iki klasörün göreli yollarını ve dosya içeriklerini karşılaştıran, salt okunur komut satırı aracı. Dosya kopyalamaz, silmez, onarmaz; yedek oluşturmaz. Ek Python paketi veya hesap gerektirmez.
 
 ## Kullanım
 
@@ -43,42 +47,19 @@ Tarama atomik anlık görüntü almaz. Gözlenebilen dosya/dizin değişimleri d
 
 Hash eşitliği SHA256'nın olağan çakışma varsayımına dayanır; geri yükleme veya uygulamanın açılması garantisi değildir. Gerçek geri yükleme ayrı konumda ayrıca denenmelidir. Paylaşılacak raporlar dosya adları/yolları içerebilir; yalnız sentetik veriyle tanıtım yap.
 
-## Testler
+## Testler ve doğrulama
 
-20 geliştirme ve 7 bağımsız test kaynakları bu taslakta değiştirilmeden korunur. Kimlikleri `ci/source_sha256.json` içindedir.
+19 Ekim 2026 tarihinde Linux 7.2.11-1-cachyos x86_64 / glibc 2.44, CPython 3.14.8 üzerinde **20/20 geliştirme + 7/7 bağımsız test geçti**; atlanan, hata veren veya başarısız test yok. Kaynak kodu ve iki test dosyası değişmedi. Hashler ve kapsam [TESTING.md](TESTING.md) içindedir.
 
-```sh
-python -B ci/run_tests.py --suite development
-python -B ci/run_tests.py --suite independent
-```
+    python3 -B ci/run_tests.py --suite development
+    python3 -B ci/run_tests.py --suite independent
 
-Önceki yerel Linux/Python 3.14.8 incelemesinde 20+7 test geçti. Bu geçmiş Linux sonucu Windows/macOS başarısı değildir.
+Bütün testler sentetik geçici dizinleri kullanır. Windows/macOS ve Python 3.9 çalıştırılmadı; platform başarısı, sertifika veya geri yükleme garantisi iddiası yok.
 
-Tek workflow yalnız elle başlatılır: standart `windows-2025` ve `macos-15-intel`, x64 Python `3.9` ve `3.14`; toplam dört job. İstenen minor sürümün action tarafından bulunan tam patch sürümü çalışma raporuna yazılır. Python kurulumu bulunamazsa setup hatasıdır; test geçti sayılmaz.
+## İsteğe bağlı platform workflow'u
 
-Her job 8 dakika; test adımı başına 3 dakika; en fazla iki eşzamanlı job. Workflow yalnız `contents: read` izni ister, checkout kimlik bilgisini saklamaz. Paket/cache/artifact upload veya yayın adımı yoktur. Resmî checkout ve setup-python action'ları tam commit SHA ile sabittir.
+.github/workflows/platform-tests.yml yalnız **workflow_dispatch** ile elle başlatılır; push veya pull_request tetikleyicisi yoktur. target_and_cost_verified varsayılan false'tur. Bu giriş ücret sınırı koymaz. Kota/maliyet koşulları doğrulanmadığı için bu yayın sırasında workflow tetiklenmedi.
 
-Testler üretim kodunu veya eski testi uyarlayarak yeşile çevrilmez. Mevcut bağımsız suite Windows'ta POSIX'e özgü `os.geteuid()` ve dosya adlarını kullanır; hata vermesi beklenebilir. FIFO, harf duyarlılığı ve symlink yetkisi testleri de platforma bağlı atlanabilir. Gerçek sonuç elde edilmeden sayılar tahmin edilmez.
+Workflow Windows ve macOS için test hazırlığı içerir; dosyanın varlığı test sonucu değildir. Atlanan testler başarı sayılmaz; bağımsız testlerdeki POSIX varsayımları Windows'ta hata verebilir. Harness atlama/hata sayılarını açıkça raporlar. Gerçek sonuç olmadan başarı rozeti üretilmez.
 
-Harness tüm atlamaları nedenleriyle gösterir; atlananlar başarı sayılmaz. `PASS_WITH_SKIPS`, tam 20/20 veya 7/7 platform geçişi demek değildir. Hata/failure olan job başarısız döner. İki suite ayrı adımda çalışır; ilk suite başarısız olsa da ikinciye devam edilir. macOS geçici dizin takma yolları fiziksel yola çözülür; mevcut test/üretim dosyaları değiştirilmez.
-
-Job summary gerçek OS/Python/runner image, commit ve source SHA256, run bağlantısı ve test sayıları içerir. Yerel `.ci-results` dosyaları commit edilmez. Gerçek Windows/macOS run olmadan ekran görüntüsü veya başarı rozeti üretilmez.
-
-## GitHub'a gönderme ön koşulları
-
-Onaylı hedef `Muhammet0-1/BackupCompare`, görünürlük private, dal `MS` (hesabın döndürdüğü varsayılan dal). Yüklenecek diff araç, sentetik testler, Türkçe README ve minimal CI ile sınırlıdır. Public açma/yayın yapma onayı yoktur; başka projeye eklenmez. Cuma 23 Ekim 2026 paylaşım hedefidir; zamanlama veya yayın işlemi yapılmaz.
-
-Public repo + standart hosted runner kullanımının ücretsiz olduğu resmî belgede doğrulandı. Private hedef için hesapta kalan ücretsiz kota, uygulanacak runner maliyeti ve sıfır ücret koşulu ayrıca doğrulanmalıdır. Genel ücretsiz kota tablosu, hesabın kalan kotasının kanıtı değildir.
-
-`target_and_cost_verified` girişi varsayılan false'tur. Bu giriş bir faturalama sınırı koymaz; doğrulamanın yerini tutmaz. Hedef/ücret koşulu çözüldükten sonra aynı workflow bir kez elle tetiklenmelidir.
-
-Gerçek run tamamlandığında her OS/Python job'unun Summary ekranı ve test adımı sonuçları ekran görüntüsü olarak alınmalı; run URL/ID ve passed/skipped/failure/error sayılarıyla birlikte sunulmalıdır. Kimlik bilgileri veya kişisel dosyalar görüntülenmemelidir.
-
-## Resmî kaynaklar
-
-- [GitHub Actions ücretlendirmesi](https://docs.github.com/en/billing/concepts/product-billing/github-actions)
-- [Standart runner etiketleri](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)
-- [Workflow söz dizimi](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
-- [checkout v6.1.0](https://github.com/actions/checkout/commit/d23441a48e516b6c34aea4fa41551a30e30af803)
-- [setup-python v6.3.0](https://github.com/actions/setup-python/commit/ece7cb06caefa5fff74198d8649806c4678c61a1)
-
+Yerel .ci-results çalışma çıktıları Git'e dahil edilmez.
